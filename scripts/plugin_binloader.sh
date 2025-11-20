@@ -100,9 +100,11 @@ getDownloadURLs() {
   # Use the GitHub API to find the latest version for this project.
   latest_url="https://api.github.com/repos/$PROJECT_GH/releases/latest"
 
-  echo "Retrieving $latest_url"
+  echo "Retrieving $latest_url with $DOWNLOADER"
 
   if [ $DOWNLOADER = 'curl' ]; then
+    DEBUG=$(curl -v "$latest_url")
+    echo "$DEBUG"
     DOWNLOAD_URL=$(curl -sL "$latest_url" | grep "$OS-$ARCH" | awk '/"browser_download_url":/{gsub(/[,"]/,"", $2); print $2}' 2>/dev/null)
     PROJECT_CHECKSUM=$(curl -sL "$latest_url" | grep "$PROJECT_CHECKSUM_FILE" | awk '/"browser_download_url":/{gsub(/[,"]/,"", $2); print $2}' 2>/dev/null)
   elif [ $DOWNLOADER = 'wget' ]; then
